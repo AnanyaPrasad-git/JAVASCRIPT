@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Robust Palindrome Checker</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f4f4f9;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            text-align: center;
+            max-width: 400px;
+            width: 100%;
+        }
+        input[type="text"] {
+            width: 80%;
+            padding: 10px;
+            margin: 15px 0;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+        button {
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        #result {
+            margin-top: 20px;
+            font-weight: bold;
+            font-size: 18px;
+        }
+        .success { color: #28a745; }
+        .error { color: #dc3545; }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h2>Palindrome Checker</h2>
+        <p>Enter text to check if it reads the same backward as forward.</p>
+        
+        <input type="text" id="textInput" placeholder="Type something...">
+        <br>
+        <button onclick="handleCheck()">Check Text</button>
+        
+        <div id="result"></div>
+    </div>
+
+    <script>
+        // 1. Factory Function (Demonstrates Closures and Scope)
+        function createPalindromeChecker(options = {}) {
+            // Block-scoped variable hidden from global window scope
+            const defaultCleanRegex = /[^A-Za-z0-9]/g; 
+            const caseSensitive = options.caseSensitive || false;
+
+            // 2. Returned Arrow Function (Demonstrates Function Types)
+            return (str) => {
+                // 3. Try-Catch Block (Demonstrates Error Handling)
+                try {
+                    // Intentionally throw an error if input is completely empty
+                    if (!str || str.trim() === "") {
+                        throw new Error('Input cannot be empty.');
+                    }
+
+                    // Strict type check simulation
+                    if (typeof str !== 'string') {
+                        throw new TypeError('Input must be a valid string.');
+                    }
+
+                    // Process text using closure scope-bound configuration
+                    let cleanStr = str.replace(defaultCleanRegex, '');
+                    
+                    if (!caseSensitive) {
+                        cleanStr = cleanStr.toLowerCase();
+                    }
+
+                    const reversedStr = cleanStr.split('').reverse().join('');
+                    return cleanStr === reversedStr;
+
+                } catch (error) {
+                    // Propagate the specific message to the UI or console
+                    console.error(`[Checker Error] ${error.message}`);
+                    throw error; // Re-throwing so the UI logic can catch and display it
+                }
+            };
+        }
+
+        // Initialize the checker closure (runs immediately on page load)
+        const checkPalindrome = createPalindromeChecker({ caseSensitive: false });
+
+        // UI Controller function
+        function handleCheck() {
+            const inputField = document.getElementById('textInput');
+            const resultDiv = document.getElementById('result');
+            const userValue = inputField.value;
+
+            try {
+                // Call the closure function type
+                const isPalindrome = checkPalindrome(userValue);
+                
+                if (isPalindrome) {
+                    resultDiv.textContent = `🎉 "${userValue}" is a palindrome!`;
+                    resultDiv.className = "success";
+                } else {
+                    resultDiv.textContent = `❌ "${userValue}" is NOT a palindrome.`;
+                    resultDiv.className = "error";
+                }
+            } catch (uiError) {
+                // Catches the error thrown inside the try-catch of the closure
+                resultDiv.textContent = `⚠️ Error: ${uiError.message}`;
+                resultDiv.className = "error";
+            }
+        }
+    </script>
+</body>
+</html>
