@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Cart Calculator</title>
+    <style>
+        :root {
+            --bg-color: #f4f7f6;
+            --card-bg: #ffffff;
+            --text-color: #333333;
+            --primary-color: #2ecc71;
+            --danger-color: #e74c3c;
+            --border-radius: 8px;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 800px;
+            background: var(--card-bg);
+            padding: 30px;
+            border-radius: var(--border-radius);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 30px;
+            color: #2c3e50;
+        }
+
+        .cart-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+
+        .cart-table th, .cart-table td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .cart-table th {
+            background-color: #f8f9fa;
+        }
+
+        .quantity-control {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        button {
+            cursor: pointer;
+            padding: 6px 12px;
+            border-radius: 4px;
+            border: none;
+            font-weight: bold;
+            transition: background 0.2s;
+        }
+
+        .btn-qty {
+            background-color: #e0e0e0;
+        }
+
+        .btn-qty:hover {
+            background-color: #d0d0d0;
+        }
+
+        .btn-remove {
+            background-color: var(--danger-color);
+            color: white;
+        }
+
+        .btn-remove:hover {
+            background-color: #c0392b;
+        }
+
+        .summary-box {
+            background-color: #f9f9f9;
+            padding: 20px;
+            border-radius: var(--border-radius);
+            margin-top: 20px;
+            border-left: 5px solid var(--primary-color);
+        }
+
+        .summary-row {
+            display: flex;
+            justify-content: space-between;
+            margin: 10px 0;
+            font-size: 1.1rem;
+        }
+
+        .total-row {
+            font-size: 1.3rem;
+            font-weight: bold;
+            border-top: 2px dashed #ddd;
+            padding-top: 10px;
+            color: var(--primary-color);
+        }
+
+        .discount-badge {
+            background-color: #e8f5e9;
+            color: #2e7d32;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.85rem;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>🛒 Your Shopping Cart</h1>
+    
+    <table class="cart-table">
+        <thead>
+            <tr>
+                <th>Product</th>
+                <th>Price</th>
+                <th>Quantity</th>
+                <th>Total</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody id="cart-items">
+            <!-- Dynamic Content via JS -->
+        </tbody>
+    </table>
+
+    <div class="summary-box">
+        <div class="summary-row">
+            <span>Subtotal:</span>
+            <span id="subtotal">$0.00</span>
+        </div>
+        <div class="summary-row">
+            <span>
+                Discount Applied: <span id="discount-desc" class="discount-badge">None</span>
+            </span>
+            <span id="discount-amount">-$0.00</span>
+        </div>
+        <div class="summary-row total-row">
+            <span>Grand Total:</span>
+            <span id="grand-total">$0.00</span>
+        </div>
+    </div>
+</div>
+
+<script>
+    // 1. Initial State Data (Array of Objects)
+    let cart = [
+        { id: 1, name: "Wireless Headphones", price: 80.00, quantity: 1 },
+        { id: 2, name: "Mechanical Keyboard", price: 120.00, quantity: 1 },
+        { id: 3, name: "Ergonomic Mouse", price: 45.00, quantity: 2 },
+        { id: 4, name: "USB-C Hub", price: 25.00, quantity: 1 }
+    ];
+
+    // 2. Core Calculator Function (Array Methods & Object Logic)
+    function calculateCart() {
+        // Array.prototype.reduce() to sum up the subtotal
+        const subtotal = cart.reduce((acc, item) => acc + (item.price * item.quantity), 0);
+        
+        let discountRate = 0;
+        let discountReason = "No discount applied";
+
+        // Discount tier logic based on total cart value
+        if (subtotal >= 300) {
+            discountRate = 0.20; // 20% off for large orders
+            discountReason = "Mega Deal: 20% off ($300+)";
+        } else if (subtotal >= 150) {
+            discountRate = 0.10; // 10% off for medium orders
+            discountReason = "Value Deal: 10% off ($150+)";
+        }
+
+        const discountAmount = subtotal * discountRate;
+        const grandTotal = subtotal - discountAmount;
+
+        return {
+            subtotal,
+            discountAmount,
+            grandTotal,
+            discountReason
+        };
+    }
+
+    // 3. UI Rendering Engine
+    function updateUI() {
+        const cartTableBody = document.getElementById('cart-items');
+        
+        // Clear previous rows
+        cartTableBody.innerHTML = '';
+
+        // Array.prototype.forEach() to build rows dynamically
+        cart.forEach(item => {
+            const itemTotal = item.price * item.quantity;
+            const row = document.createElement('tr');
+            
+            row.innerHTML = `
+                <td><strong>${item.name}</strong></td>
+                <td>$${item.price.toFixed(2)}</td>
+                <td>
+                    <div class="quantity-control">
+                        <button class="btn-qty" onclick="changeQuantity(${item.id}, -1)">-</button>
+                        <span>${item.quantity}</span>
+                        <button class="btn-qty" onclick="changeQuantity(${item.id}, 1)">+</button>
+                    </div>
+                </td>
+                <td>$${itemTotal.toFixed(2)}</td>
+                <td>
+                    <button class="btn-remove" onclick="removeItem(${item.id})">Remove</button>
+                </td>
+            `;
+            cartTableBody.appendChild(row);
+        });
+
+        // Get calculations
+        const totals = calculateCart();
+
+        // Update Summary Elements
+        document.getElementById('subtotal').innerText = `$${totals.subtotal.toFixed(2)}`;
+        document.getElementById('discount-amount').innerText = `-$${totals.discountAmount.toFixed(2)}`;
+        document.getElementById('discount-desc').innerText = totals.discountReason;
+        document.getElementById('grand-total').innerText = `$${totals.grandTotal.toFixed(2)}`;
+    }
+
+    // 4. State Management Functions
+    function changeQuantity(id, change) {
+        // Array.prototype.map() to update quantities cleanly without directly mutating original positions
+        cart = cart.map(item => {
+            if (item.id === id) {
+                const newQty = item.quantity + change;
+                return { ...item, quantity: newQty < 1 ? 1 : newQty }; // Prevent negative/zero quantities
+            }
+            return item;
+        });
+        updateUI();
+    }
+
+    function removeItem(id) {
+        // Array.prototype.filter() to eject an item from the cart
+        cart = cart.filter(item => item.id !== id);
+        updateUI();
+    }
+
+    // Initial Execution on Load
+    updateUI();
+</script>
+
+</body>
+</html>
