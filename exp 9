@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Storage and Theme Settings</title>
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial;
+            margin: 0;
+            transition: 0.3s;
+        }
+
+        .container {
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .card {
+            width: 450px;
+            padding: 35px;
+            text-align: center;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+        }
+
+        button {
+            padding: 12px 20px;
+            margin: 8px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+
+        .light {
+            background: #f4f4f4;
+            color: #222;
+        }
+
+        .dark {
+            background: #222;
+            color: white;
+        }
+
+        .blue {
+            background: #dbeafe;
+            color: #1e3a8a;
+        }
+
+        .info {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 8px;
+            background: rgba(128,128,128,0.15);
+        }
+
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <div class="card">
+
+        <h1>⚙️ User Preferences</h1>
+
+        <p>Select your preferred theme:</p>
+
+        <button onclick="setTheme('light')">
+            Light
+        </button>
+
+        <button onclick="setTheme('dark')">
+            Dark
+        </button>
+
+        <button onclick="setTheme('blue')">
+            Blue
+        </button>
+
+        <div class="info">
+
+            <p id="themeDisplay">
+                Current Theme: None
+            </p>
+
+            <p id="sessionDisplay">
+                Session Visits: 0
+            </p>
+
+        </div>
+
+    </div>
+
+</div>
+
+<script>
+
+// Load saved theme from localStorage
+const savedTheme =
+    localStorage.getItem("theme");
+
+if (savedTheme) {
+    applyTheme(savedTheme);
+}
+
+
+// Set theme
+function setTheme(theme) {
+
+    // localStorage permanently saves preference
+    localStorage.setItem("theme", theme);
+
+    applyTheme(theme);
+}
+
+
+// Apply selected theme
+function applyTheme(theme) {
+
+    document.body.className = theme;
+
+    document.getElementById("themeDisplay").textContent =
+        "Current Theme: " + theme;
+}
+
+
+// sessionStorage example
+let visits =
+    sessionStorage.getItem("visits");
+
+if (!visits) {
+    visits = 1;
+} else {
+    visits = Number(visits) + 1;
+}
+
+sessionStorage.setItem("visits", visits);
+
+document.getElementById("sessionDisplay").textContent =
+    "Session Visits: " + visits;
+
+</script>
+
+</body>
+</html>
