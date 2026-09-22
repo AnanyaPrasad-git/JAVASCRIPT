@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>JSON Data Loader</title>
+
+    <!-- jQuery CDN -->
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f4f6f8;
+            margin: 0;
+            padding: 30px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: auto;
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.15);
+        }
+
+        h1 {
+            text-align: center;
+            color: #222;
+        }
+
+        .buttons {
+            text-align: center;
+            margin: 25px 0;
+        }
+
+        button {
+            padding: 12px 20px;
+            margin: 5px;
+            border: none;
+            border-radius: 7px;
+            cursor: pointer;
+            font-size: 15px;
+            color: white;
+        }
+
+        .fetch-btn {
+            background: #007bff;
+        }
+
+        .jquery-btn {
+            background: #28a745;
+        }
+
+        button:hover {
+            opacity: 0.85;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th {
+            background: #343a40;
+            color: white;
+            padding: 12px;
+        }
+
+        td {
+            padding: 12px;
+            border: 1px solid #ddd;
+            text-align: center;
+        }
+
+        tr:nth-child(even) {
+            background: #f2f2f2;
+        }
+
+        #status {
+            text-align: center;
+            font-weight: bold;
+            margin: 15px;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <h1>📊 JSON Data Viewer</h1>
+
+    <p style="text-align:center;">
+        Load JSON data using <b>Fetch API</b> or <b>jQuery $.getJSON()</b>
+    </p>
+
+    <div class="buttons">
+
+        <button class="fetch-btn" onclick="loadUsingFetch()">
+            Load Using Fetch()
+        </button>
+
+        <button class="jquery-btn" onclick="loadUsingJQuery()">
+            Load Using $.getJSON()
+        </button>
+
+    </div>
+
+    <div id="status">
+        Click a button to load JSON data.
+    </div>
+
+    <table id="dataTable">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Name</th>
+                <th>Email</th>
+                <th>City</th>
+            </tr>
+        </thead>
+
+        <tbody id="tableBody">
+        </tbody>
+    </table>
+
+</div>
+
+
+<script>
+
+// JSON data
+const jsonData = [
+    {
+        "id": 1,
+        "name": "Ananya Prasad",
+        "email": "ananya@gmail.com",
+        "city": "Nagpur"
+    },
+    {
+        "id": 2,
+        "name": "Ayushi Nasare",
+        "email": "ayushi@gmail.com",
+        "city": "Nagpur"
+    },
+    {
+        "id": 3,
+        "name": "Divyanka Chakole",
+        "email": "divyanka@gmail.com",
+        "city": "Pune"
+    },
+    {
+        "id": 4,
+        "name": "Disha Devgirkar",
+        "email": "disha@gmail.com",
+        "city": "Mumbai"
+    }
+];
+
+
+// Function to display JSON data
+function displayData(data) {
+
+    const tableBody = document.getElementById("tableBody");
+
+    // Clear previous data
+    tableBody.innerHTML = "";
+
+    // Loop through JSON array
+    data.forEach(function(user) {
+
+        const row = document.createElement("tr");
+
+        row.innerHTML = `
+            <td>${user.id}</td>
+            <td>${user.name}</td>
+            <td>${user.email}</td>
+            <td>${user.city}</td>
+        `;
+
+        tableBody.appendChild(row);
+    });
+}
+
+
+// Fetch API
+function loadUsingFetch() {
+
+    document.getElementById("status").textContent =
+        "Loading data using Fetch()...";
+
+    // Convert JSON data to a Blob URL
+    const blob = new Blob(
+        [JSON.stringify(jsonData)],
+        { type: "application/json" }
+    );
+
+    const url = URL.createObjectURL(blob);
+
+    fetch(url)
+        .then(response => response.json())
+        .then(data => {
+
+            displayData(data);
+
+            document.getElementById("status").textContent =
+                "✓ Data loaded successfully using Fetch()";
+
+        })
+        .catch(error => {
+
+            document.getElementById("status").textContent =
+                "Error loading JSON data.";
+
+            console.error(error);
+        });
+}
+
+
+// jQuery $.getJSON()
+function loadUsingJQuery() {
+
+    document.getElementById("status").textContent =
+        "Loading data using jQuery $.getJSON()...";
+
+    // Convert JSON data into a Blob URL
+    const blob = new Blob(
+        [JSON.stringify(jsonData)],
+        { type: "application/json" }
+    );
+
+    const url = URL.createObjectURL(blob);
+
+    $.getJSON(url, function(data) {
+
+        displayData(data);
+
+        document.getElementById("status").textContent =
+            "✓ Data loaded successfully using jQuery $.getJSON()";
+
+    }).fail(function() {
+
+        document.getElementById("status").textContent =
+            "Error loading JSON data.";
+
+    });
+}
+
+</script>
+
+</body>
+</html>
