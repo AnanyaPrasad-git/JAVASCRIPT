@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Gym Admission Form</title>
+
+    <style>
+        body {
+            font-family: Arial;
+            background: #e8f5e9;
+            padding: 30px;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: auto;
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+        }
+
+        h1 {
+            text-align: center;
+            color: #198754;
+        }
+
+        label {
+            display: block;
+            margin-top: 15px;
+            font-weight: bold;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 11px;
+            margin-top: 5px;
+            box-sizing: border-box;
+            border: 1px solid #aaa;
+            border-radius: 6px;
+        }
+
+        .error {
+            color: red;
+            font-size: 13px;
+        }
+
+        button {
+            width: 100%;
+            margin-top: 20px;
+            padding: 12px;
+            background: #198754;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #146c43;
+        }
+
+        #success {
+            margin-top: 20px;
+            color: green;
+            font-weight: bold;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <h1>🏋️ Gym Admission Form</h1>
+
+    <form id="gymForm">
+
+        <label>Full Name</label>
+        <input type="text" id="name"
+               placeholder="Enter your name">
+        <div class="error" id="nameError"></div>
+
+        <label>Email</label>
+        <input type="email" id="email"
+               placeholder="example@gmail.com">
+        <div class="error" id="emailError"></div>
+
+        <label>Phone Number</label>
+        <input type="text" id="phone"
+               placeholder="10-digit mobile number">
+        <div class="error" id="phoneError"></div>
+
+        <label>Age</label>
+        <input type="number" id="age"
+               placeholder="Enter your age">
+        <div class="error" id="ageError"></div>
+
+        <label>Membership</label>
+
+        <select id="membership">
+            <option value="">Select Membership</option>
+            <option value="Monthly">Monthly - ₹1000</option>
+            <option value="Quarterly">Quarterly - ₹2500</option>
+            <option value="Yearly">Yearly - ₹8000</option>
+        </select>
+
+        <div class="error" id="membershipError"></div>
+
+        <button type="submit">
+            Submit Admission
+        </button>
+
+        <div id="success"></div>
+
+    </form>
+
+</div>
+
+<script>
+
+const form = document.getElementById("gymForm");
+
+const nameInput = document.getElementById("name");
+const emailInput = document.getElementById("email");
+const phoneInput = document.getElementById("phone");
+const ageInput = document.getElementById("age");
+const membershipInput =
+    document.getElementById("membership");
+
+
+// Live name validation
+nameInput.addEventListener("input", function() {
+
+    if (nameInput.value.trim().length < 3) {
+        document.getElementById("nameError").textContent =
+            "Name must contain at least 3 characters.";
+    } else {
+        document.getElementById("nameError").textContent = "";
+    }
+
+});
+
+
+// Live email validation
+emailInput.addEventListener("input", function() {
+
+    const regex =
+        /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+    if (!regex.test(emailInput.value)) {
+        document.getElementById("emailError").textContent =
+            "Enter a valid email address.";
+    } else {
+        document.getElementById("emailError").textContent = "";
+    }
+
+});
+
+
+// Live phone validation
+phoneInput.addEventListener("input", function() {
+
+    const regex = /^[0-9]{10}$/;
+
+    if (!regex.test(phoneInput.value)) {
+        document.getElementById("phoneError").textContent =
+            "Phone number must contain 10 digits.";
+    } else {
+        document.getElementById("phoneError").textContent = "";
+    }
+
+});
+
+
+// Live age validation
+ageInput.addEventListener("input", function() {
+
+    const age = Number(ageInput.value);
+
+    if (age < 16 || age > 80) {
+        document.getElementById("ageError").textContent =
+            "Age must be between 16 and 80.";
+    } else {
+        document.getElementById("ageError").textContent = "";
+    }
+
+});
+
+
+// Form submit event
+form.addEventListener("submit", function(event) {
+
+    event.preventDefault();
+
+    const name = nameInput.value.trim();
+    const email = emailInput.value.trim();
+    const phone = phoneInput.value.trim();
+    const age = Number(ageInput.value);
+    const membership = membershipInput.value;
+
+    if (
+        name.length < 3 ||
+        !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) ||
+        !/^[0-9]{10}$/.test(phone) ||
+        age < 16 ||
+        age > 80 ||
+        membership === ""
+    ) {
+
+        alert("Please correct all errors.");
+        return;
+    }
+
+    document.getElementById("success").textContent =
+        "✓ Gym admission submitted successfully!";
+
+    form.reset();
+});
+
+</script>
+
+</body>
+</html>
